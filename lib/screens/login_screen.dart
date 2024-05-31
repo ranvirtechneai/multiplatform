@@ -6,6 +6,8 @@ import 'package:multiplatorm/components/textfield.dart';
 import 'package:multiplatorm/constant/image_strings.dart';
 import 'package:multiplatorm/constant/text_string.dart';
 import 'package:multiplatorm/screens/registration_screen.dart';
+import 'package:multiplatorm/services/auth/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   final void Function() onTap;
@@ -18,9 +20,36 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool isLoading = false;
+
+  // sign in user
+  void signIn() {
+    //get the auth servicee>(context);
+    final authService = Provider.of<AuthService>(context, listen: false);
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      authService.userSignInWithEmailAndPassword(
+          emailController.text, passwordController.text);
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    void dispose() {
+      emailController.dispose();
+      passwordController.dispose();
+      super.dispose();
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: SafeArea(
@@ -54,13 +83,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   CTextField(
                     controller: passwordController,
                     hintText: 'Password',
-                    obscureText: false,
+                    obscureText: true,
                   ),
 
                   SizedBox(height: 20),
 
                   // login button
-                  CButton(onTap: () {}, text: 'Sign In'),
+                  isLoading
+                      ? CircularProgressIndicator()
+                      : CButton(onTap: signIn, text: 'Sign In'),
 
                   SizedBox(height: 20),
                   // not a member text
