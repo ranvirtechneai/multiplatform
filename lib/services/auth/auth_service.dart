@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthService extends ChangeNotifier {
+  // firebase auth instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // firestore instance
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // user sign in
   Future<UserCredential> userSignInWithEmailAndPassword(
@@ -13,18 +18,19 @@ class AuthService extends ChangeNotifier {
         email: email,
         password: password,
       );
+      // add new doc to the users collection if it does not exist
+      _firestore.collection('users').doc(userCredential.user!.uid).set({
+        'uid': userCredential.user!.uid,
+        'email': email,
+      });
+
       return userCredential;
     }
     // on any errors
-    on FirebaseAuthException catch (e) {
+    catch (e) {
       print(" ${e.toString()}");
-      throw Exception(e.code);
+      throw Exception(e);
     }
-  }
-
-  // sign out user
-  Future<void> signOut() async {
-    return await _auth.signOut();
   }
 
   // register user
@@ -37,12 +43,24 @@ class AuthService extends ChangeNotifier {
         email: email,
         password: password,
       );
+
+      // create the collection when we are registering the user
+      _firestore.collection('users').doc(userCredential.user!.uid).set({
+        'uid': userCredential.user!.uid,
+        'email': email,
+      });
+
       return userCredential;
     }
     // on any errors
-    on FirebaseAuthException catch (e) {
+    catch (e) {
       print(" ${e.toString()}");
-      throw Exception(e.code);
+      throw Exception(e);
     }
+  }
+
+  // sign out user
+  Future<void> signOut() async {
+    return await _auth.signOut();
   }
 }
