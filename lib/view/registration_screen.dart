@@ -1,36 +1,40 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
 import 'package:multiplatorm/components/button.dart';
 import 'package:multiplatorm/components/textfield.dart';
 import 'package:multiplatorm/constant/image_strings.dart';
-import 'package:multiplatorm/constant/text_string.dart';
-import 'package:multiplatorm/screens/registration_screen.dart';
+import 'package:multiplatorm/view/login_screen.dart';
 import 'package:multiplatorm/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatefulWidget {
+class RegistrationScreen extends StatefulWidget {
   final void Function() onTap;
-  const LoginScreen({super.key, required this.onTap});
+  const RegistrationScreen({super.key, required this.onTap});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegistrationScreenState extends State<RegistrationScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   bool isLoading = false;
 
-  // sign in user
-  void signIn() {
+  // sign up user
+  void signUp() {
+    if (passwordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Password does not match')));
+      return;
+    }
     //get the auth servicee>(context);
+
     final authService = Provider.of<AuthService>(context, listen: false);
     setState(() {
       isLoading = true;
     });
     try {
-      authService.userSignInWithEmailAndPassword(
+      authService.userRegistrationWithEmailAndPassword(
           emailController.text, passwordController.text);
     } catch (e) {
       ScaffoldMessenger.of(context)
@@ -44,12 +48,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    void dispose() {
-      emailController.dispose();
-      passwordController.dispose();
-      super.dispose();
-    }
-
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: SafeArea(
@@ -63,12 +61,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   //icon
                   Image.asset(chatLogo, scale: 5),
                   //spaced
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
                   //welcome back text
-                  Text(welcomeText, style: TextStyle(fontSize: 20)),
+                  const Text("Lets Create an Account For You",
+                      style: TextStyle(fontSize: 20)),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
                   // email textfield
                   CTextField(
@@ -77,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: false,
                   ),
 
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
                   // password textfield
                   CTextField(
@@ -86,25 +85,32 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: true,
                   ),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 10),
+
+                  // confirm password
+                  CTextField(
+                    controller: confirmPasswordController,
+                    hintText: 'Confirm Password',
+                    obscureText: true,
+                  ),
+
+                  const SizedBox(height: 20),
 
                   // login button
-                  isLoading
-                      ? CircularProgressIndicator()
-                      : CButton(onTap: signIn, text: 'Sign In'),
+                  CButton(onTap: signUp, text: 'Sign Up'),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
+
                   // not a member text
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Not a member?"),
-                      SizedBox(width: 4),
+                      const Text("already a member?"),
+                      const SizedBox(width: 4),
                       GestureDetector(
-                        onTap: widget.onTap,
-                        child: Text('Register',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      )
+                          onTap: widget.onTap,
+                          child: const Text('Login',
+                              style: TextStyle(fontWeight: FontWeight.bold)))
                     ],
                   )
                 ],
@@ -114,5 +120,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+    ;
   }
 }

@@ -1,40 +1,36 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:multiplatorm/components/button.dart';
 import 'package:multiplatorm/components/textfield.dart';
 import 'package:multiplatorm/constant/image_strings.dart';
-import 'package:multiplatorm/screens/login_screen.dart';
+import 'package:multiplatorm/constant/text_string.dart';
+import 'package:multiplatorm/view/registration_screen.dart';
 import 'package:multiplatorm/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
 
-class RegistrationScreen extends StatefulWidget {
+class LoginScreen extends StatefulWidget {
   final void Function() onTap;
-  const RegistrationScreen({super.key, required this.onTap});
+  const LoginScreen({super.key, required this.onTap});
 
   @override
-  State<RegistrationScreen> createState() => _RegistrationScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
   bool isLoading = false;
 
-  // sign up user
-  void signUp() {
-    if (passwordController.text != confirmPasswordController.text) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Password does not match')));
-      return;
-    }
+  // sign in user
+  void signIn() {
     //get the auth servicee>(context);
-
     final authService = Provider.of<AuthService>(context, listen: false);
     setState(() {
       isLoading = true;
     });
     try {
-      authService.userRegistrationWithEmailAndPassword(
+      authService.userSignInWithEmailAndPassword(
           emailController.text, passwordController.text);
     } catch (e) {
       ScaffoldMessenger.of(context)
@@ -48,6 +44,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    void dispose() {
+      emailController.dispose();
+      passwordController.dispose();
+      super.dispose();
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: SafeArea(
@@ -61,13 +63,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   //icon
                   Image.asset(chatLogo, scale: 5),
                   //spaced
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
 
                   //welcome back text
-                  const Text("Lets Create an Account For You",
-                      style: TextStyle(fontSize: 20)),
+                  Text(welcomeText, style: TextStyle(fontSize: 20)),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
 
                   // email textfield
                   CTextField(
@@ -76,7 +77,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     obscureText: false,
                   ),
 
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
 
                   // password textfield
                   CTextField(
@@ -85,32 +86,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     obscureText: true,
                   ),
 
-                  const SizedBox(height: 10),
-
-                  // confirm password
-                  CTextField(
-                    controller: confirmPasswordController,
-                    hintText: 'Confirm Password',
-                    obscureText: true,
-                  ),
-
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
 
                   // login button
-                  CButton(onTap: signUp, text: 'Sign Up'),
+                  isLoading
+                      ? CircularProgressIndicator()
+                      : CButton(onTap: signIn, text: 'Sign In'),
 
-                  const SizedBox(height: 20),
-
+                  SizedBox(height: 20),
                   // not a member text
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("already a member?"),
-                      const SizedBox(width: 4),
+                      Text("Not a member?"),
+                      SizedBox(width: 4),
                       GestureDetector(
-                          onTap: widget.onTap,
-                          child: const Text('Login',
-                              style: TextStyle(fontWeight: FontWeight.bold)))
+                        onTap: widget.onTap,
+                        child: Text('Register',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                      )
                     ],
                   )
                 ],
@@ -120,6 +114,5 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
       ),
     );
-    ;
   }
 }

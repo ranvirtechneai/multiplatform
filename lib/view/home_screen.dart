@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:multiplatorm/components/drawer.dart';
-import 'package:multiplatorm/screens/chat_screen.dart';
+import 'package:multiplatorm/view/chat_screen.dart';
 import 'package:multiplatorm/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
 

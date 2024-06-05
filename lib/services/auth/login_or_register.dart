@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:multiplatorm/screens/login_screen.dart';
-import 'package:multiplatorm/screens/registration_screen.dart';
+import 'package:multiplatorm/view/login_screen.dart';
+import 'package:multiplatorm/view/registration_screen.dart';
 
 class LoginOrRegister extends StatefulWidget {
   const LoginOrRegister({super.key});

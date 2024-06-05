@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:multiplatorm/firebase_options.dart';
-import 'package:multiplatorm/screens/login_screen.dart';
+import 'package:multiplatorm/view/login_screen.dart';
 import 'package:multiplatorm/services/auth/auth_gate.dart';
 import 'package:multiplatorm/services/auth/auth_service.dart';
 import 'package:multiplatorm/services/auth/login_or_register.dart';
